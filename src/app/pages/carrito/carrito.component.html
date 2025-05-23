@@ -1,0 +1,8 @@
+```html
+<!-- ...existing code... -->
+<div class="total-pagar" style="margin-top: 24px; text-align: right; font-size: 1.2em;">
+  <strong>Total a pagar:</strong>
+  {{ carrito?.reduce((acc, prod) => acc + (prod.precio * prod.cantidad), 0) | currency:'MXN' }}
+</div>
+<!-- ...existing code... -->
+```
