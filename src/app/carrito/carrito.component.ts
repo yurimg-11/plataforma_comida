@@ -54,25 +54,27 @@ export class CarritoComponent {
   }
 
 confirmarPedido() {
-  const productos = this.carritoService.obtenerProductos();
-  if (!productos || productos.length === 0) {
-    this.mensaje = 'No hay productos en el carrito.';
-    return;
-  }
-
-  const cliente = localStorage.getItem('nombre') || 'Invitado';
-
-  this.http.post('http://localhost/Cooters/api/pedidos.php', { productos, cliente }).subscribe(
-    res => {
-      this.mensaje = '¡Su pedido se ha realizado correctamente!';
-      this.limpiarCarrito();
-    },
-    error => {
-      this.mensaje = 'Error al enviar el pedido.';
-      console.error('Error al enviar el pedido:', error);
+    const productos = this.carritoService.obtenerProductos();
+    if (!productos || productos.length === 0) {
+      this.mensaje = 'No hay productos en el carrito.';
+      return;
     }
-  );
-}
+    
+    // Obtener nombre del usuario logueado
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const nombre = user.nombre || 'Cliente';
+    
+    this.http.post('http://localhost/Cooters/api/pedidos.php', { productos, nombre }).subscribe({
+      next: (response: any) => {
+        this.mensaje = '¡Su pedido se ha realizado correctamente!';
+        this.limpiarCarrito();
+      },
+      error: (error) => {
+        this.mensaje = 'Error al enviar el pedido.';
+        console.error('Error al enviar el pedido:', error);
+      }
+    });
+  }
 
 
   volverAlMenu() {

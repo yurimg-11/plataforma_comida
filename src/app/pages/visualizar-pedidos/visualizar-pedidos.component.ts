@@ -9,6 +9,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { Router } from '@angular/router';
 
 interface Pedido {
   id: number;
@@ -42,7 +43,7 @@ export class VisualizarPedidosComponent implements OnInit, OnDestroy {
   mostrarModal: boolean = false;
   private intervalId: any;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit() {
     this.cargarPedidos();
@@ -54,16 +55,16 @@ export class VisualizarPedidosComponent implements OnInit, OnDestroy {
   }
 
   cargarPedidos() {
-    this.http.get('/api/visualizar_pedidos/obtener_pedidos.php').subscribe(
-      (data: any) => {
+    this.http.get<any[]>('http://localhost/Cooters/api/pedidos.php').subscribe({
+      next: (data) => {
         this.pedidos = data;
         this.filtrarPedidos();
         this.mensaje = '';
       },
-      error => {
+      error: (error) => {
         this.mensaje = 'No se pudieron cargar los pedidos. Verifica la conexión con el servidor.';
       }
-    );
+    });
   }
 
   filtrarPedidos() {
@@ -75,34 +76,25 @@ export class VisualizarPedidosComponent implements OnInit, OnDestroy {
   }
 
   verDetalle(id: number) {
-    this.http.get(`/api/visualizar_pedidos/pedido_detalle.php?id=${id}`).subscribe(
-      detalle => {
-        this.pedidoDetalle = detalle;
-        this.mostrarModal = true;
-        this.mensaje = '';
-      },
-      error => {
-        this.mensaje = 'No se pudo cargar el detalle del pedido.';
-      }
-    );
+    this.router.navigate(['/detalle-pedido', id]);
   }
 
   aceptarPedido(id: number) {
-    this.http.post('/api/visualizar_pedidos/aceptar_pedido.php', { id }).subscribe(
-      () => this.cargarPedidos(),
-      error => {
+    this.http.put('http://localhost/Cooters/api/pedidos.php', { id, estado: 'aceptado' }).subscribe({
+      next: () => this.cargarPedidos(),
+      error: (error) => {
         this.mensaje = 'No se pudo aceptar el pedido.';
       }
-    );
+    });
   }
 
   rechazarPedido(id: number) {
-    this.http.post('/api/visualizar_pedidos/rechazar_pedido.php', { id }).subscribe(
-      () => this.cargarPedidos(),
-      error => {
+    this.http.put('http://localhost/Cooters/api/pedidos.php', { id, estado: 'rechazado' }).subscribe({
+      next: () => this.cargarPedidos(),
+      error: (error) => {
         this.mensaje = 'No se pudo rechazar el pedido.';
       }
-    );
+    });
   }
 
   cerrarModal() {

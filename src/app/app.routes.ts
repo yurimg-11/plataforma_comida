@@ -7,7 +7,7 @@ export const routes: Routes = [
     component: AdminLayoutComponent,
     children: [
       { path: 'bienvenida', loadComponent: () => import('./pages/bienvenida/bienvenida.component').then(m => m.BienvenidaComponent) },
-      { path: 'detalle-pedido', loadComponent: () => import('./pages/detalle-pedido/detalle-pedido.component').then(m => m.DetallePedidoComponent) },
+      { path: 'detalle-pedido/:id', loadComponent: () => import('./pages/detalle-pedido/detalle-pedido.component').then(m => m.DetallePedidoComponent) },
       { path: 'gestion-productos', loadComponent: () => import('./pages/gestion-productos/gestion-productos.component').then(m => m.GestionProductosComponent) },
       { path: 'modificar-menu', loadComponent: () => import('./pages/modificar-menu/modificar-menu.component').then(m => m.ModificarMenuComponent) },
       { path: 'visualizar-pedidos', loadComponent: () => import('./pages/visualizar-pedidos/visualizar-pedidos.component').then(m => m.VisualizarPedidosComponent) },
